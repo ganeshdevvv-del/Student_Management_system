@@ -1,28 +1,23 @@
 
 <?php
 
-$conn = require 'db.php';
+require __DIR__ . '/../connection/db.php';
 
 $errors = [];
 $email = '';
+$role = 'student';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
-
-    if (empty($email)) {
-        $errors[] = "Email is required.";
+    $role = $_POST['role'] ?? 'student';
     }
+    else {
 
-    if (empty($password)) {
-        $errors[] = "Password is required.";
-    }
+        $table = $role === 'admin' ? 'admin' : 'students';
 
-    if (empty($errors)) {
-
-        // Check user
-        $sql = "SELECT id, first_name, password FROM students WHERE email = ?";
+        $sql = "SELECT id, password FROM $table WHERE email = ?";
 
         $stmt = mysqli_prepare($conn, $sql);
 
@@ -34,12 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($user && password_verify($password, $user['password'])) {
 
-            session_start();
+            if ($role === 'admin') {
+                header('Location: ../dashboard/admin.php');
+            } else {
+                header('Location: ../dashboard/student.php');
+            }
 
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['first_name'] = $user['first_name'];
-
-            header('Location: ../dashboard/admin.php');
             exit;
 
         } else {
@@ -48,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         mysqli_stmt_close($stmt);
     }
-}
+
 
 mysqli_close($conn);
 
@@ -67,33 +62,28 @@ mysqli_close($conn);
 
     <h2>Welcome Back</h2>
 
-    <?php if (!empty($errors)): ?>
-        <?php foreach ($errors as $error): ?>
-            <p style="color:red;">
-                <?= htmlspecialchars($error) ?>
-            </p>
-        <?php endforeach; ?>
-    <?php endif; ?>
+    <?php foreach ($errors as $error): ?>
+        <p style="color:red;">
+            <?= htmlspecialchars($error) ?>
+        </p>
+    <?php endforeach; ?>
 
     <form method="POST" action="">
 
+        <label>Login As:</label>
+        <select name="role" required>
+            <option value="student" <?= $role === 'student' ? 'selected' : '' ?>>Student</option>
+            <option value="admin" <?= $role === 'admin' ? 'selected' : '' ?>>Admin</option>
+        </select>
+        <br><br>
+
         <label>Email:</label>
-        <input
-            type="email"
-            name="email"
-            value="<?= htmlspecialchars($email) ?>"
-            placeholder="Enter your email"
-            required
-        >
+        <input type="email" name="email"
+            value="<?= htmlspecialchars($email) ?>" required>
         <br><br>
 
         <label>Password:</label>
-        <input
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-            required
-        >
+        <input type="password" name="password" required>
         <br><br>
 
         <button type="submit">Login</button>

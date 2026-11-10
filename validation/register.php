@@ -1,7 +1,7 @@
 
 <?php
 
-$conn = require __DIR__ . '/db.php';
+require __DIR__ . '/../connection/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -17,61 +17,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = $_POST['status'] ?? '';
 
     if ($first_name === '' || $email === '' || $password === '') {
-        echo "Please fill required fields.";
-    }
+        echo 'Please fill required fields.';
+    } 
     elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo "Invalid email.";
-    }
+        echo 'Invalid email.';
+    } 
     elseif ($password !== $confirm_password) {
-        echo "Passwords do not match.";
-    }
+        echo 'Passwords do not match.';
+    } 
     else {
-
-        // Check email
-        $sql = "SELECT id FROM students WHERE email = ?";
+        $sql = 'SELECT id FROM students WHERE email = ?';
         $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "s", $email);
-        mysqli_stmt_execute($stmt);
 
-        $result = mysqli_stmt_get_result($stmt);
-
-        if (mysqli_num_rows($result) > 0) {
-            echo "Email already exists.";
-        }
+        if (!$stmt) {
+            echo 'Registration failed.';
+        } 
         else {
+            mysqli_stmt_bind_param($stmt, 's', $email);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
 
-            // $password = password_hash($password, PASSWORD_DEFAULT);
-            $dob = $dob === '' ? null : $dob;
-
-            // Insert user
-            $sql = "INSERT INTO users
-            (first_name, last_name, email, password, phone, gender, dob, address, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-            $stmt = mysqli_prepare($conn, $sql);
-
-            mysqli_stmt_bind_param(
-                $stmt,
-                "sssssssss",
-                $first_name,
-                $last_name,
-                $email,
-                $password,
-                $phone,
-                $gender,
-                $dob,
-                $address,
-                $status
-            );
-
-            if (mysqli_stmt_execute($stmt)) {
-                echo "Registration successful!";
+            if (mysqli_num_rows($result) > 0) {
+                echo 'Email already exists.';
             } else {
-                echo "Registration failed.";
-            }
-        }
+                $dob = $dob === '' ? null : $dob;
+                // $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        mysqli_stmt_close($stmt);
+                $sql = 'INSERT INTO students (first_name, last_name, email, password, phone, gender, dob, address, status)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+                $insertStmt = mysqli_prepare($conn, $sql);
+
+                if (!$insertStmt) {
+                    echo 'Registration failed.';
+                } else {
+                    mysqli_stmt_bind_param(
+                        $insertStmt,
+                        'sssssssss',
+                        $first_name,
+                        $last_name,
+                        $email,
+                        $hashedPassword,
+                        $phone,
+                        $gender,
+                        $dob,
+                        $address,
+                        $status
+                    );
+
+                    if (mysqli_stmt_execute($insertStmt)) {
+                        echo 'Registration successful!';
+                    } else {
+                        echo 'Registration failed.';
+                    }
+
+                    mysqli_stmt_close($insertStmt);
+                }
+            }
+
+            mysqli_stmt_close($stmt);
+        }
     }
 }
 

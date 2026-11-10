@@ -1,5 +1,5 @@
 <?php
-$conn = require __DIR__ . '/../validation/db.php';
+require __DIR__ . '/../connection/db.php';
 $students = mysqli_query(
     $conn,
     'SELECT id, first_name, last_name, email, phone, gender, dob, address, status

@@ -1,17 +1,11 @@
 <?php
-$conn = require __DIR__ . '/../validation/db.php';
+require __DIR__ . '/../connection/db.php';
 $result = mysqli_query(
     $conn,
     'SELECT (SELECT COUNT(*) FROM students) AS total_students,
             (SELECT COUNT(*) FROM course) AS total_courses'
 );
-
-if (!$result) {
-    http_response_code(500);
-    exit('Unable to load dashboard data: ' . htmlspecialchars(mysqli_error($conn), ENT_QUOTES, 'UTF-8'));
-}
-
-                $stats = mysqli_fetch_assoc($result);
+$stats = mysqli_fetch_assoc($result);
 ?>
 
 
