@@ -3,152 +3,150 @@
 
 require __DIR__ . '/../connection/db.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$error = '';
 
-    $first_name = trim($_POST['first_name'] ?? '');
-    $last_name = trim($_POST['last_name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $confirm_password = $_POST['confirm_password'] ?? '';
-    $phone = trim($_POST['phone'] ?? '');
-    $gender = $_POST['gender'] ?? '';
-    $dob = $_POST['dob'] ?? '';
-    $address = trim($_POST['address'] ?? '');
-    $status = $_POST['status'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($first_name === '' || $email === '' || $password === '') {
-        echo 'Please fill required fields.';
-    } 
-    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo 'Invalid email.';
-    } 
-    elseif ($password !== $confirm_password) {
-        echo 'Passwords do not match.';
-    } 
-    else {
-        $sql = 'SELECT id FROM students WHERE email = ?';
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    // $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $phone = $_POST['phone'];
+    $gender = $_POST['gender'];
+    $dob = $_POST['dob'];
+    $address = $_POST['address'];
+
+    $confirm_password = $_POST['confirm_password'];
+
+    if ($_POST['password'] != $confirm_password) {
+
+        $error = "Passwords do not match";
+
+    } else {
+
+        $sql = "INSERT INTO students
+                (first_name, last_name, email, password, phone, gender, dob, address)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
         $stmt = mysqli_prepare($conn, $sql);
 
-        if (!$stmt) {
-            echo 'Registration failed.';
-        } 
-        else {
-            mysqli_stmt_bind_param($stmt, 's', $email);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
+        mysqli_stmt_bind_param(
+            $stmt,
+            "ssssssss",
+            $first_name,
+            $last_name,
+            $email,
+            $password,
+            $phone,
+            $gender,
+            $dob,
+            $address
+        );
 
-            if (mysqli_num_rows($result) > 0) {
-                echo 'Email already exists.';
-            } else {
-                $dob = $dob === '' ? null : $dob;
-                // $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-                $sql = 'INSERT INTO students (first_name, last_name, email, password, phone, gender, dob, address, status)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-
-                $insertStmt = mysqli_prepare($conn, $sql);
-
-                if (!$insertStmt) {
-                    echo 'Registration failed.';
-                } else {
-                    mysqli_stmt_bind_param(
-                        $insertStmt,
-                        'sssssssss',
-                        $first_name,
-                        $last_name,
-                        $email,
-                        $hashedPassword,
-                        $phone,
-                        $gender,
-                        $dob,
-                        $address,
-                        $status
-                    );
-
-                    if (mysqli_stmt_execute($insertStmt)) {
-                        echo 'Registration successful!';
-                    } else {
-                        echo 'Registration failed.';
-                    }
-
-                    mysqli_stmt_close($insertStmt);
-                }
-            }
-
-            mysqli_stmt_close($stmt);
+        if (mysqli_stmt_execute($stmt)) {
+            header("Location: ../dashboard/student.php");
+            exit;
+        } else {
+            $error = "Registration failed";
         }
     }
 }
-
-mysqli_close($conn);
 
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add Student</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {background: #f5f6f8; color: #252a34}
+    </style>
 </head>
-<body>
 
-    <h2>User Registration</h2>
+<body class="py-5">
+<div class="container" style="max-width: 720px;">
+    <div class="card shadow-sm rounded-4 border-0">
+        <div class="card-body p-4">
 
-    <form action="" method="POST">
+            <h2 class="h4 mb-2">Add Student</h2>
 
-        <label>First Name:</label>
-        <input type="text" name="first_name" maxlength="150" required>
-        <br><br>
+            <p class="text-danger"><?php echo $error; ?></p>
 
-        <label>Last Name:</label>
-        <input type="text" name="last_name" maxlength="150">
-        <br><br>
+            <form method="POST">
 
-        <label>Email:</label>
-        <input type="email" name="email" maxlength="150" required>
-        <br><br>
+                <div class="row g-3">
 
-        <label>Password:</label>
-        <input type="password" name="password" required>
-        <br><br>
+                    <div class="col-md-6">
+                        <label class="form-label">First Name</label>
+                        <input type="text" name="first_name" class="form-control">
+                    </div>
 
-        <label>Confirm Password:</label>
-        <input type="password" name="confirm_password" required>
-        <br><br>
+                    <div class="col-md-6">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" name="last_name" class="form-control">
+                    </div>
 
-        <label>Phone:</label>
-        <input type="tel" name="phone" maxlength="20">
-        <br><br>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control">
+                    </div>
 
-        <label>Gender:</label>
-        <select name="gender">
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-        </select>
-        <br><br>
+                    <div class="col-md-6">
+                        <label class="form-label">Phone</label>
+                        <input type="text" name="phone" class="form-control">
+                    </div>
 
-        <label>Date of Birth:</label>
-        <input type="date" name="dob">
-        <br><br>
+                    <div class="col-md-6">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control">
+                    </div>
 
-        <label>Address:</label>
-        <textarea name="address" maxlength="500"></textarea>
-        <br><br>
+                    <div class="col-md-6">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" name="confirm_password" class="form-control">
+                    </div>
 
-        <label>Status:</label>
-        <select name="status" required>
-            <option value="">Select Status</option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-        </select>
-        <br><br>
+                    <div class="col-md-6">
+                        <label class="form-label">Gender</label>
+                        <select name="gender" class="form-select">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
 
-        <button type="submit">Register</button>
-        <button type="reset">Reset</button>
+                    <div class="col-md-6">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" name="dob" class="form-control">
+                    </div>
 
-    </form>
+                    <div class="col-12">
+                        <label class="form-label">Address</label>
+                        <textarea name="address" class="form-control" rows="3"></textarea>
+                    </div>
+
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Register</button>
+                    <button type="reset" class="btn btn-secondary">Reset</button>
+                    <a href="../dashboard/student.php" class="btn btn-link">Back</a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
 </body>
 </html>

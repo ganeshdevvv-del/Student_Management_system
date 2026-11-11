@@ -3,50 +3,42 @@
 
 require __DIR__ . '/../connection/db.php';
 
-$errors = [];
 $email = '';
-$role = 'student';
+$error = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $role = $_POST['role'] ?? 'student';
-    }
-    else {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $role = $_POST['role'];
 
-        $table = $role === 'admin' ? 'admin' : 'students';
+    $table = ($role == 'admin') ? 'admin' : 'students';
 
-        $sql = "SELECT id, password FROM $table WHERE email = ?";
+    $sql = "SELECT * FROM $table WHERE email = ?";
+    $stmt = mysqli_prepare($conn, $sql);
 
-        $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
 
-        mysqli_stmt_bind_param($stmt, "s", $email);
-        mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($result);
 
-        $result = mysqli_stmt_get_result($stmt);
-        $user = mysqli_fetch_assoc($result);
+    if ($user && password_verify($password, $user['password'])) {
 
-        if ($user && password_verify($password, $user['password'])) {
-
-            if ($role === 'admin') {
-                header('Location: ../dashboard/admin.php');
-            } else {
-                header('Location: ../dashboard/student.php');
-            }
-
-            exit;
-
-        } else {
-            $errors[] = "Invalid email or password.";
+        if ($role == 'admin') {
+            header("Location: ../dashboard/admin.php");
+        } 
+        
+        else {
+            header("Location: ../stddashboard.php");
         }
 
-        mysqli_stmt_close($stmt);
+        exit;
+
+    } else {
+        $error = "Invalid email or password";
     }
-
-
-mysqli_close($conn);
-
+}
 ?>
 
 <!DOCTYPE html>
@@ -56,39 +48,48 @@ mysqli_close($conn);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <h2>Welcome Back</h2>
+    <main class="container login-container">
 
-    <?php foreach ($errors as $error): ?>
-        <p style="color:red;">
-            <?= htmlspecialchars($error) ?>
-        </p>
-    <?php endforeach; ?>
+        <h2>Welcome Back</h2>
 
-    <form method="POST" action="">
+        <p><?php echo $error; ?></p>
 
-        <label>Login As:</label>
-        <select name="role" required>
-            <option value="student" <?= $role === 'student' ? 'selected' : '' ?>>Student</option>
-            <option value="admin" <?= $role === 'admin' ? 'selected' : '' ?>>Admin</option>
-        </select>
-        <br><br>
+        <form method="POST">
 
-        <label>Email:</label>
-        <input type="email" name="email"
-            value="<?= htmlspecialchars($email) ?>" required>
-        <br><br>
+            <div class="form-grid">
 
-        <label>Password:</label>
-        <input type="password" name="password" required>
-        <br><br>
+                <div class="form-group">
+                    <label>Login As:</label>
+                    <select name="role" required>
+                        <option value="student">Student</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
 
-        <button type="submit">Login</button>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" name="email" required>
+                </div>
 
-    </form>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" name="password" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">Login</button>
+                </div>
+
+            </div>
+
+        </form>
+
+    </main>
 
 </body>
 </html>

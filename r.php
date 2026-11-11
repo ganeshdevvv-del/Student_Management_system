@@ -4,7 +4,11 @@ require __DIR__.'../connection/db.php';
 
 
 $first_name = trim($_POST['first_name']??'');
-$last_name = trim($_POST)
+$last_name = trim($_POST["last_name"]??"");
+$email = trim($_POST['email']??"");
+$pass = trim ($_POST["password"]??"");
+$
+
 
 
 

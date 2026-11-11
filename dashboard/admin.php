@@ -25,7 +25,7 @@ $stats = mysqli_fetch_assoc($result);
         .sidebar a.active, .sidebar a:hover { background: #fff1e6; color: #d58b53; }
         .banner { background: linear-gradient(110deg, #d6a168, #5c9c7c); }
         .stat-icon { width: 40px; height: 40px; }
-        @media (max-width: 767px) { .sidebar { min-height: auto; } }
+        /* @media (max-width: 767px) { .sidebar { min-height: auto; } } */
     </style>
 </head>
 <body>
@@ -34,10 +34,11 @@ $stats = mysqli_fetch_assoc($result);
         <aside class="col-md-2 sidebar p-3">
             <h4 class="mb-4">🎓 Student</h4>
             <nav class="nav flex-column gap-2">
-                <a class="active rounded p-2" href="admin.php">▦ &nbsp; Admin Dashboard</a>
-                <a class="rounded p-2" href="student.php">♙ &nbsp; Student profile</a>
-                <a class="rounded p-2" href="course.php">▤ &nbsp; Courses</a>
-                <a class="rounded p-2" href="#">⚙ &nbsp; Settings</a>
+                <a class="active rounded p-2" href="admin.php">▦  Admin Dashboard</a>
+                <a class="rounded p-2" href="student.php">♙ Student profile</a>
+                <a class="rounded p-2" href="course.php">▤ Courses</a>
+                <a class="rounded p-2" href="enrollment.php">☑ Enrollments</a>
+                <a class="rounded p-2" href="#">⚙ Settings</a>
             </nav>
         </aside>
 
@@ -48,15 +49,15 @@ $stats = mysqli_fetch_assoc($result);
                 </div>
                 <div class="d-flex align-items-center gap-3">
                     <input class="form-control rounded-pill" type="search" placeholder="Search..." aria-label="Search">
-                    <span class="text-nowrap">🔔 &nbsp; Student</span>
                 </div>
             </header>
 
             <section class="banner text-white rounded-4 p-4 p-lg-5 mb-4">
-                <p class="mb-2">Academic Year 2026-2030</p>
-                <h2 class="h4">Welcome to the Student Dashboard</h2>
-                <p class="mb-3">View your courses, attendance and academic progress.</p>
-                <a class="btn btn-light rounded-pill px-4" href="#overview">View overview</a>
+                <p class="mb-2">Academic Year 2026-2029</p>
+                <h2 class="h4">Welcome to the ADMIN Dashboard</h2>
+                <p class="mb-3">View courses & Enroll Students.</p>
+                <a class="btn btn-light rounded-pill px-4" href="student.php">View overview</a>
+                <a class="btn btn-outline-light rounded-pill px-4 ms-2" href="enrollment.php">Manage enrollments</a>
             </section>
 
             <section id="overview" class="row g-3">
@@ -64,8 +65,10 @@ $stats = mysqli_fetch_assoc($result);
                     <div class="card border-0 shadow-sm rounded-4 h-100">
                         <div class="card-body">
                             <div class="stat-icon bg-warning-subtle rounded-circle d-flex align-items-center justify-content-center mb-4">♙</div>
+
                             <p class="text-secondary mb-1">Total Students</p>
                             <h3 class="h4 mb-0"><?= (int) $stats['total_students'] ?></h3>
+                            
                         </div>
                     </div>
                 </div>
