@@ -55,7 +55,7 @@ $studentCount = mysqli_num_rows($result);
         <!-- Sidebar -->
         <aside class="col-md-2 sidebar p-3">
 
-            <h4>Students</h4>
+            <h4 class="mb-4">🎓 Student</h4>
 
             <nav class="nav flex-column gap-2">
                 <a href="admin.php" class="p-2 rounded">Admin Dashboard</a>
