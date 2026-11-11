@@ -47,9 +47,12 @@ $stats = mysqli_fetch_assoc($result);
                 <div>
                     <h1 class="h3 mb-1">Dashboard</h1>
                 </div>
-                <div class="d-flex align-items-center gap-3">
+
+                <a href="../validation/newAdmin.php" class="btn btn-primary btn-sm rounded-pill px-2 py-1"> + Add Admin </a>
+                <!-- search option -->
+                <!-- <div class="d-flex align-items-center gap-3">
                     <input class="form-control rounded-pill" type="search" placeholder="Search..." aria-label="Search">
-                </div>
+                </div> -->
             </header>
 
             <section class="banner text-white rounded-4 p-4 p-lg-5 mb-4">
