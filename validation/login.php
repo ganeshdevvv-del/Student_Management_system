@@ -3,7 +3,6 @@
 
 require __DIR__ . '/../connection/db.php';
 
-$email = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -23,19 +22,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $result = mysqli_stmt_get_result($stmt);
     $user = mysqli_fetch_assoc($result);
 
-    if ($user && password_verify($password, $user['password'])) {
+    // echo "executing.............";
+
+    if ($user && (password_verify($password, $user['password']) || $password == $user['password'])) {
 
         if ($role == 'admin') {
             header("Location: ../dashboard/admin.php");
+            // header("Location: ../stddashboard.php");
         } 
-        
         else {
             header("Location: ../stddashboard.php");
         }
 
-        exit;
-
-    } else {
+    } 
+    else {
         $error = "Invalid email or password";
     }
 }
@@ -48,21 +48,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="style.css"> -->
 </head>
 
 <body>
 
     <main class="container login-container">
-
         <h2>Welcome Back</h2>
-
         <p><?php echo $error; ?></p>
 
         <form method="POST">
-
             <div class="form-grid">
-
                 <div class="form-group">
                     <label>Login As:</label>
                     <select name="role" required>
@@ -84,9 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="form-actions">
                     <button type="submit">Login</button>
                 </div>
-
             </div>
-
         </form>
 
     </main>
