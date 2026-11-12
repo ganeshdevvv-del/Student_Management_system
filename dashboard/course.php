@@ -48,7 +48,7 @@ if (isset($_GET['delete'])) {
 // Fetch courses
 $result = mysqli_query($conn, "SELECT * FROM course");
 
-$courseCount = mysqli_num_rows($result);
+$courseCount = mysqli_num_rows($result); #count the rows.........................
 
 ?>
 
@@ -151,7 +151,7 @@ $courseCount = mysqli_num_rows($result);
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">Course Fees</label>
+                    <label class="form-label">Course Fess</label>
                     <input type="number" name="course_fees" class="form-control"
                         placeholder="Enter course amount" min="0" step="0.01" required>
                 </div>
@@ -192,7 +192,7 @@ $courseCount = mysqli_num_rows($result);
                                 <tr>
                                     <th>Course Code</th>
                                     <th>Course Name</th>
-                                    <th>Course Fees</th>
+                                    <th>Course Fess</th>
                                     <th>Duration</th>
                                     <th>Action</th>
                                 </tr>
@@ -204,7 +204,8 @@ $courseCount = mysqli_num_rows($result);
                                         <td><?= htmlspecialchars($course['course_code']) ?></td>
                                         <td><?= htmlspecialchars($course['course_name']) ?></td>
                                         <td><?= htmlspecialchars($course['course_fees']) ?></td>
-                                        <td><?= $duration ?>
+                                
+                                        <td><?php $duration ?>
                                         <td>
                                             <a href="course.php?delete=<?= urlencode($course['course_code']) ?>"
                                                 class="btn btn-sm btn-danger"
