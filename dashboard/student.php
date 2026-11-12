@@ -38,23 +38,19 @@ $studentCount = mysqli_fetch_assoc($countResult)['total'];
         body {
             background: #f5f6f8;
         }
-
         .sidebar {
             min-height: 100vh;
             background: white;
         }
-
         .sidebar a {
             color: #626875;
             text-decoration: none;
         }
-
         .sidebar a:hover,
         .sidebar a.active {
             background: #fff1e6;
             color: #d58b53;
         }
-
         .directory-banner {
             background: linear-gradient(110deg, #d6a168, #5c9c7c);
         }
@@ -68,7 +64,7 @@ $studentCount = mysqli_fetch_assoc($countResult)['total'];
 
         <!-- navbar.................. -->
         <aside class="col-md-2 sidebar p-3">
-            <h4 class="mb-4">Student</h4>
+            <h4 class="mb-4">🎓 Student</h4>
 
             <nav class="nav flex-column gap-2">
                 <a href="admin.php" class="p-2 rounded">Admin Dashboard</a>
@@ -174,13 +170,13 @@ $studentCount = mysqli_fetch_assoc($countResult)['total'];
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#editModal"
                                                     data-id="<?= $student['id'] ?>"
-                                                    data-first="<?= htmlspecialchars($student['first_name'], ENT_QUOTES) ?>"
-                                                    data-last="<?= htmlspecialchars($student['last_name'], ENT_QUOTES) ?>"
-                                                    data-email="<?= htmlspecialchars($student['email'], ENT_QUOTES) ?>"
-                                                    data-phone="<?= htmlspecialchars($student['phone'], ENT_QUOTES) ?>"
-                                                    data-gender="<?= htmlspecialchars($student['gender'], ENT_QUOTES) ?>"
+                                                    data-first="<?= htmlspecialchars($student['first_name']) ?>"
+                                                    data-last="<?= htmlspecialchars($student['last_name']) ?>"
+                                                    data-email="<?= htmlspecialchars($student['email']) ?>"
+                                                    data-phone="<?= htmlspecialchars($student['phone']) ?>"
+                                                    data-gender="<?= htmlspecialchars($student['gender']) ?>"
                                                     data-dob="<?= $student['dob'] ?>"
-                                                    data-address="<?= htmlspecialchars($student['address'], ENT_QUOTES) ?>">
+                                                    data-address="<?= htmlspecialchars($student['address']) ?>">
                                                     Edit
                                                 </button>
 
@@ -196,17 +192,12 @@ $studentCount = mysqli_fetch_assoc($countResult)['total'];
                                               </div>
                                         </td>
                                     </tr>
-
                                 <?php endwhile; ?>
-
                             </tbody>
-
                         </table>
-
                     </div>
                 </div>
             </div>
-
         </main>
     </div>
 </div>
@@ -214,23 +205,19 @@ $studentCount = mysqli_fetch_assoc($countResult)['total'];
 
 <!-- Edit Modal -->
 <div class="modal fade" id="editModal" tabindex="-1">
-
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
 
             <form action="edit.php" method="POST">
-
                 <div class="modal-header">
                     <h5>Edit Student</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
-
                     <input type="hidden" name="id" id="editId">
                     <input type="hidden" name="action" value="edit">
-
-                    <div class="row g-3">
+                <div class="row g-3">
 
                         <div class="col-md-6">
                             <label>First Name</label>
@@ -274,9 +261,7 @@ $studentCount = mysqli_fetch_assoc($countResult)['total'];
 
                     </div>
                 </div>
-
                 <div class="modal-footer">
-
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         Cancel
                     </button>
@@ -284,7 +269,6 @@ $studentCount = mysqli_fetch_assoc($countResult)['total'];
                     <button type="submit" class="btn btn-primary">
                         Save Changes
                     </button>
-
                 </div>
 
             </form>

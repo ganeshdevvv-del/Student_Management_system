@@ -1,10 +1,11 @@
 <?php
 require __DIR__ . '/../connection/db.php';
-$result = mysqli_query(
-    $conn,
-    'SELECT (SELECT COUNT(*) FROM students) AS total_students,
-            (SELECT COUNT(*) FROM course) AS total_courses'
-);
+
+$result = mysqli_query($conn,
+                      'SELECT (SELECT COUNT(*) FROM students) AS total_students,
+                      (SELECT COUNT(*) FROM course) AS total_courses'
+                      );
+                      
 $stats = mysqli_fetch_assoc($result);
 ?>
 
@@ -36,7 +37,7 @@ $stats = mysqli_fetch_assoc($result);
             <nav class="nav flex-column gap-2">
                 <a class="active rounded p-2" href="admin.php">▦  Admin Dashboard</a>
                 <a class="rounded p-2" href="student.php">♙ Student profile</a>
-                <a class="rounded p-2" href="course.php">▤ Courses</a>
+                <a href="course.php" class="rounded p-2" >▤ Courses</a>
                 <a class="rounded p-2" href="enrollment.php">☑ Enrollments</a>
                 <a class="rounded p-2" href="#">⚙ Settings</a>
             </nav>
@@ -70,18 +71,18 @@ $stats = mysqli_fetch_assoc($result);
                             <div class="stat-icon bg-warning-subtle rounded-circle d-flex align-items-center justify-content-center mb-4">♙</div>
 
                             <p class="text-secondary mb-1">Total Students</p>
-                            <h3 class="h4 mb-0"><?= (int) $stats['total_students'] ?></h3>
+                            <h3 class="h4 mb-0"> <?=(int)$stats["total_students"]?> </h3>
                             
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-xl-3">
-                    <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card shadow-sm rounded-4 h-100">
                         <div class="card-body">
                             <div class="stat-icon bg-success-subtle rounded-circle d-flex align-items-center justify-content-center mb-4">▤</div>
                             <p class="text-secondary mb-1">Courses</p>
 
-                            <h3 class="h4 mb-0"><?= (int) $stats['total_courses'] ?></h3>
+                            <h3 class="h4 mb-0"> <?=(int)$stats["total_courses"]?> </h3>
                         </div>
                     </div>
                 </div>

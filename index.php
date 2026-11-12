@@ -25,7 +25,7 @@ welcome dashboard.......................
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarMenu">
+            <div class="collapse continer-fluide navbar-collapse" id="navbarMenu">
 
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0 text-primary ">
                     <li class="nav-item">
@@ -33,6 +33,10 @@ welcome dashboard.......................
                     </li>
 
                     <li class="nav-item">
+                        <li class="nav-item">
+                            <a href="#settings" class="nav-link px-3 py-2 d-flex"></a>
+                        </li>
+
                         <a class="nav-link px-3" href="#services">Services</a>
                     </li>
 

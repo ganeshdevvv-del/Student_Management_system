@@ -31,18 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $stmt = mysqli_prepare($conn, $sql);
 
-        mysqli_stmt_bind_param(
-            $stmt,
-            "ssssssss",
-            $first_name,
-            $last_name,
-            $email,
-            $password,
-            $phone,
-            $gender,
-            $dob,
-            $address
-        );
+        mysqli_stmt_bind_param( $stmt,"ssssssss",$first_name,$last_name,$email,$password,$phone,$gender,$dob,$address );
 
         if (mysqli_stmt_execute($stmt)) {
             header("Location: ../dashboard/student.php");

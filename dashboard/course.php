@@ -3,23 +3,30 @@
 require __DIR__ . '/../connection/db.php';
 
 // Add course
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $courseCode = trim($_POST['course_code']);
-    $courseName = trim($_POST['course_name']);
+if ($_SERVER['REQUEST_METHOD'] === "POST") {
+
+    $courseCode = trim($_POST['course_code'] ?? "");
+    $courseName = trim($_POST['course_name'] ?? "");
     $description = "Learn and Gain knowledge";
+    $fees = trim($_POST['course_fees'] ?? "");
+    $start = trim($_POST['course_start'] ?? "");
+    $end = trim($_POST['course_end'] ?? "");
 
-    $sql = "INSERT INTO course (course_code, course_name, description)
-            VALUES (?, ?, ?)";
+    $duration = $start . "-" . $end;
+
+    $sql = "INSERT INTO course (course_code, course_name, description, duration,fees)
+            VALUES (?, ?, ?, ?, ?)";
 
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "sss", $courseCode, $courseName, $description);
+
+    mysqli_stmt_bind_param($stmt,"sssss",$courseCode,$courseName,$description,$duration,$fees);
 
     if (mysqli_stmt_execute($stmt)) {
         header("Location: course.php?saved=1");
         exit;
     } else {
-        $error = "Unable to add course. Course code may already exist.";
+        $error = "Unable to add the course.";
     }
 }
 
@@ -39,7 +46,7 @@ if (isset($_GET['delete'])) {
 }
 
 // Fetch courses
-$result = mysqli_query($conn, "SELECT * FROM course ORDER BY course_name");
+$result = mysqli_query($conn, "SELECT * FROM course");
 
 $courseCount = mysqli_num_rows($result);
 
@@ -97,7 +104,7 @@ $courseCount = mysqli_num_rows($result);
 
         </aside>
 
-        <!-- Main Content -->
+        <!-- Main Content & banner section-->
         <main class="col-md-10 p-4">
 
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -121,39 +128,59 @@ $courseCount = mysqli_num_rows($result);
                 </div>
             </div>
 
-            <!-- Add Course -->
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <!-- Add new Course...............-.........-............ -->
+           
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body">
 
-                <div class="card-body">
+        <h5 class="mb-3">Add New Course</h5>
 
-                    <h5 class="mb-3">Add New Course</h5>
+        <form method="POST">
+            <div class="row g-3">
 
-                    <form method="POST">
-                        <div class="row g-3">
-
-                            <div class="col-md-6">
-                                <label class="form-label">Course Code</label>
-                                <input type="text" name="course_code" class="form-control"
-                                    placeholder="Enter course code" required>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Course Name</label>
-                                <input type="text" name="course_name" class="form-control"
-                                    placeholder="Enter course name" required>
-                            </div>
-
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-sm mt-3">
-                            + Add Course
-                        </button>
-
-                    </form>
-
+                <div class="col-md-6">
+                    <label class="form-label">Course Code</label>
+                    <input type="text" name="course_code" class="form-control"
+                        placeholder="Enter course code" required>
                 </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Course Name</label>
+                    <input type="text" name="course_name" class="form-control"
+                        placeholder="Enter course name" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Course Fees</label>
+                    <input type="number" name="course_fees" class="form-control"
+                        placeholder="Enter course amount" min="0" step="0.01" required>
+                </div>
+
+                <div class="col-12">
+                    <h6 class="mb-0">Course Duration</h6>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Start At</label>
+                    <input type="text" name="course_start" class="form-control"
+                        placeholder="Jan" required>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">End At</label>
+                    <input type="text" name="course_end" class="form-control"
+                        placeholder="Dec" required>
+                </div>
+
             </div>
 
+            <button type="submit" class="btn btn-primary btn-sm mt-3">
+                + Add Course
+            </button>
+
+        </form>
+    </div>
+</div>
             <!-- display table -->
             <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-body">
@@ -165,6 +192,8 @@ $courseCount = mysqli_num_rows($result);
                                 <tr>
                                     <th>Course Code</th>
                                     <th>Course Name</th>
+                                    <th>Course Fees</th>
+                                    <th>Duration</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -174,6 +203,8 @@ $courseCount = mysqli_num_rows($result);
                                     <tr>
                                         <td><?= htmlspecialchars($course['course_code']) ?></td>
                                         <td><?= htmlspecialchars($course['course_name']) ?></td>
+                                        <td><?= htmlspecialchars($course['course_fees']) ?></td>
+                                        <td><?= $duration ?>
                                         <td>
                                             <a href="course.php?delete=<?= urlencode($course['course_code']) ?>"
                                                 class="btn btn-sm btn-danger"
@@ -184,20 +215,14 @@ $courseCount = mysqli_num_rows($result);
                                     </tr>
 
                                 <?php endwhile; ?>
-
                             </tbody>
 
                         </table>
-
                     </div>
-
                 </div>
             </div>
-
         </main>
-
     </div>
 </div>
-
 </body>
 </html>

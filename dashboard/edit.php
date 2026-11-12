@@ -40,18 +40,7 @@ $sql = "UPDATE students SET
 
 $stmt = mysqli_prepare($conn, $sql);
 
-mysqli_stmt_bind_param(
-    $stmt,
-    "sssssssi",
-    $first_name,
-    $last_name,
-    $email,
-    $phone,
-    $gender,
-    $dob,
-    $address,
-    $id
-);
+mysqli_stmt_bind_param($stmt,"sssssssi",$first_name,$last_name,$email,$phone,$gender,$dob,$address,$id );
 
 if (mysqli_stmt_execute($stmt)) {
     header("Location: student.php?updated=1");
