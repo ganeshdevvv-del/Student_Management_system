@@ -3,10 +3,24 @@
 
 require __DIR__ . '/../connection/db.php';
 
-$sql = "SELECT * FROM students ORDER BY id ASC";
-$result = mysqli_query($conn, $sql);
+$search = $_GET['search'] ?? '';
 
-$studentCount = mysqli_num_rows($result);
+$sql = "SELECT * FROM students
+        WHERE first_name LIKE ?
+        OR last_name LIKE ?
+        ORDER BY id ASC";
+
+$stmt = mysqli_prepare($conn, $sql);
+
+$search = "%$search%";
+
+mysqli_stmt_bind_param($stmt, "ss", $search, $search);
+mysqli_stmt_execute($stmt);
+
+$result = mysqli_stmt_get_result($stmt);
+
+$countResult = mysqli_query($conn, "SELECT COUNT(*) AS total FROM students");
+$studentCount = mysqli_fetch_assoc($countResult)['total'];
 
 ?>
 
@@ -52,10 +66,9 @@ $studentCount = mysqli_num_rows($result);
 <div class="container-fluid">
     <div class="row">
 
-        <!-- Sidebar -->
+        <!-- navbar.................. -->
         <aside class="col-md-2 sidebar p-3">
-
-            <h4 class="mb-4">🎓 Student</h4>
+            <h4 class="mb-4">Student</h4>
 
             <nav class="nav flex-column gap-2">
                 <a href="admin.php" class="p-2 rounded">Admin Dashboard</a>
@@ -63,30 +76,26 @@ $studentCount = mysqli_num_rows($result);
                 <a href="course.php" class="p-2 rounded">Courses</a>
                 <a href="enrollment.php" class="p-2 rounded">Enrollments</a>
             </nav>
-
         </aside>
 
-        <!-- Main Content -->
+        <!-- Content&Banner -->
         <main class="col-md-10 p-4">
 
             <div class="d-flex justify-content-between align-items-center mb-4">
-
                 <div>
                     <p class="text-secondary mb-1">Administration</p>
                     <h3>Student Directory</h3>
                 </div>
-
-                <a href="../validation/register.php" class="btn btn-primary btn-sm rounded-pill px-2 py-1"> + Add Student </a>
-
+                <a href="../validation/register.php" class="btn btn-primary btn-sm rounded-pill px-3">
+                    + Add Student
+                </a>
             </div>
 
-            <!-- Banner -->
             <div class="directory-banner text-white rounded-4 p-4 mb-4">
                 <h4>Manage your student community</h4>
                 <p class="mb-0">View all registered students.</p>
             </div>
 
-            <!-- Student Count -->
             <div class="card border-0 shadow-sm rounded-4 mb-4">
                 <div class="card-body">
                     <p class="text-secondary mb-1">Total Students</p>
@@ -94,17 +103,31 @@ $studentCount = mysqli_num_rows($result);
                 </div>
             </div>
 
-            <!-- Student Table -->
+            <!-- Student table-->
             <div class="card border-0 shadow-sm rounded-4">
-
                 <div class="card-body">
 
-                    <h5>All Students</h5>
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+
+                        <h5 class="mb-0">All Students</h5>
+
+                        <!-- Search option-->
+                        <form method="GET" class="d-flex gap-2">
+                            <input type="search"
+                                   name="search"
+                                   class="form-control"
+                                   placeholder="Search by name..."
+                                   value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+
+                            <button type="submit" class="btn btn-primary">
+                                Search
+                            </button>
+                            <a href="student.php" class="btn btn-outline-secondary"> Clear </a>
+                        </form>
+                    </div>
 
                     <div class="table-responsive">
-
                         <table class="table table-hover align-middle">
-
                             <thead class="table-light">
                                 <tr>
                                     <th>Reg. Number</th>
@@ -120,11 +143,23 @@ $studentCount = mysqli_num_rows($result);
 
                             <tbody>
 
+                                <?php if (mysqli_num_rows($result) == 0): ?>
+                                    <tr>
+                                        <td colspan="8" class="text-center text-secondary py-4">
+                                            No students found.
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+
                                 <?php while ($student = mysqli_fetch_assoc($result)): ?>
 
                                     <tr>
                                         <td><?= htmlspecialchars($student['reg_num']) ?></td>
-                                        <td><?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?> </td>
+
+                                        <td>
+                                            <?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?>
+                                        </td>
+
                                         <td><?= htmlspecialchars($student['email']) ?></td>
                                         <td><?= htmlspecialchars($student['phone']) ?></td>
                                         <td><?= htmlspecialchars($student['gender']) ?></td>
@@ -149,22 +184,17 @@ $studentCount = mysqli_num_rows($result);
                                                     Edit
                                                 </button>
 
-                                                <!-- Delete -->
-                                                <form action="edit.php" method="POST"
-                                                    onsubmit="return confirm('Delete this student?')">
+                        <!-- Delete -->
+                        <form action="edit.php" method="POST" onsubmit="return confirm('Delete this student?')">
 
-                                                    <input type="hidden" name="id" value="<?= $student['id'] ?>">
-                                                    <input type="hidden" name="action" value="remove">
+                            <input type="hidden" name="id" value="<?= $student['id'] ?>">
+                            <input type="hidden" name="action" value="remove">
+                            <button type="submit" class="btn btn-sm btn-danger"> Remove </button>
 
-                                                    <button type="submit" class="btn btn-sm btn-danger">
-                                                        Remove
-                                                    </button>
+                        </form>                        
 
-                                                </form>
-
-                                            </div>
+                                              </div>
                                         </td>
-
                                     </tr>
 
                                 <?php endwhile; ?>
@@ -172,9 +202,11 @@ $studentCount = mysqli_num_rows($result);
                             </tbody>
 
                         </table>
+
                     </div>
                 </div>
             </div>
+
         </main>
     </div>
 </div>
@@ -182,21 +214,24 @@ $studentCount = mysqli_num_rows($result);
 
 <!-- Edit Modal -->
 <div class="modal fade" id="editModal" tabindex="-1">
+
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
 
             <form action="edit.php" method="POST">
+
                 <div class="modal-header">
                     <h5>Edit Student</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
+
                     <input type="hidden" name="id" id="editId">
                     <input type="hidden" name="action" value="edit">
-                    
-                    <!-- table rows -->
+
                     <div class="row g-3">
+
                         <div class="col-md-6">
                             <label>First Name</label>
                             <input type="text" name="first_name" id="editFirst" class="form-control">
@@ -209,7 +244,7 @@ $studentCount = mysqli_num_rows($result);
 
                         <div class="col-md-6">
                             <label>Email</label>
-                            <input type="email" name="email" id="editEmail" class="form-control" >
+                            <input type="email" name="email" id="editEmail" class="form-control">
                         </div>
 
                         <div class="col-md-6">
@@ -238,7 +273,6 @@ $studentCount = mysqli_num_rows($result);
                         </div>
 
                     </div>
-
                 </div>
 
                 <div class="modal-footer">
@@ -254,12 +288,10 @@ $studentCount = mysqli_num_rows($result);
                 </div>
 
             </form>
-
         </div>
-
     </div>
-
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -269,14 +301,11 @@ document.getElementById('editModal').addEventListener('show.bs.modal', function(
 
     let button = event.relatedTarget;
 
-    document.getElementById('editId').value = button.dataset.id;
-    document.getElementById('editFirst').value = button.dataset.first;
-    document.getElementById('editLast').value = button.dataset.last;
-    document.getElementById('editEmail').value = button.dataset.email;
-    document.getElementById('editPhone').value = button.dataset.phone;
-    document.getElementById('editGender').value = button.dataset.gender;
-    document.getElementById('editDob').value = button.dataset.dob;
-    document.getElementById('editAddress').value = button.dataset.address;
+    let fields = ['id', 'first', 'last', 'email', 'phone', 'gender', 'dob', 'address'];
+
+    fields.forEach(field => {
+        document.getElementById('edit' + field.charAt(0).toUpperCase() + field.slice(1)).value = button.dataset[field];
+    });
 
 });
 
