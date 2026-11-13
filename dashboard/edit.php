@@ -28,15 +28,7 @@ $gender = $_POST['gender'];
 $dob = $_POST['dob'] ?: null;
 $address = trim($_POST['address']);
 
-$sql = "UPDATE students SET
-        first_name = ?,
-        last_name = ?,
-        email = ?,
-        phone = ?,
-        gender = ?,
-        dob = ?,
-        address = ?
-        WHERE id = ?";
+$sql = "UPDATE students SET first_name = ?, last_name = ?, email = ?, phone = ?, gender = ?, dob = ?, address = ? WHERE id = ?";
 
 $stmt = mysqli_prepare($conn, $sql);
 

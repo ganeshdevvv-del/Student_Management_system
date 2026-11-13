@@ -3,12 +3,9 @@
 
 require __DIR__ . '/../connection/db.php';
 
-$search = $_GET['search'] ?? '';
+$search = $_GET['search']?? '';
 
-$sql = "SELECT * FROM students
-        WHERE first_name LIKE ?
-        OR last_name LIKE ?
-        ORDER BY id ASC";
+$sql = "SELECT * FROM students WHERE first_name LIKE ? OR last_name LIKE ? ORDER BY id ASC";
 
 $stmt = mysqli_prepare($conn, $sql);
 
@@ -23,10 +20,8 @@ $countResult = mysqli_query($conn, "SELECT COUNT(*) AS total FROM students");
 $studentCount = mysqli_fetch_assoc($countResult)['total'];
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -86,12 +81,10 @@ $studentCount = mysqli_fetch_assoc($countResult)['total'];
                     + Add Student
                 </a>
             </div>
-
             <div class="directory-banner text-white rounded-4 p-4 mb-4">
                 <h4>Manage your student community</h4>
                 <p class="mb-0">View all registered students.</p>
             </div>
-
             <div class="card border-0 shadow-sm rounded-4 mb-4">
                 <div class="card-body">
                     <p class="text-secondary mb-1">Total Students</p>
@@ -109,11 +102,8 @@ $studentCount = mysqli_fetch_assoc($countResult)['total'];
 
                         <!-- Search option-->
                         <form method="GET" class="d-flex gap-2">
-                            <input type="search"
-                                   name="search"
-                                   class="form-control"
-                                   placeholder="Search by name..."
-                                   value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+                            <input type="search" name="search" class="form-control" placeholder="Search by studet name..."
+                                   value="<?= htmlspecialchars($_GET['search']??'') ?>">
 
                             <button type="submit" class="btn btn-primary">
                                 Search
@@ -148,14 +138,9 @@ $studentCount = mysqli_fetch_assoc($countResult)['total'];
                                 <?php endif; ?>
 
                                 <?php while ($student = mysqli_fetch_assoc($result)): ?>
-
                                     <tr>
                                         <td><?= htmlspecialchars($student['reg_num']) ?></td>
-
-                                        <td>
-                                            <?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?>
-                                        </td>
-
+                                        <td><?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?></td>
                                         <td><?= htmlspecialchars($student['email']) ?></td>
                                         <td><?= htmlspecialchars($student['phone']) ?></td>
                                         <td><?= htmlspecialchars($student['gender']) ?></td>
@@ -165,7 +150,7 @@ $studentCount = mysqli_fetch_assoc($countResult)['total'];
                                         <td>
                                             <div class="d-flex gap-2">
 
-                                                <!-- Edit -->
+                                                <!-- Edit button........... -->
                                                 <button class="btn btn-sm btn-primary"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#editModal"
@@ -179,16 +164,13 @@ $studentCount = mysqli_fetch_assoc($countResult)['total'];
                                                     data-address="<?= htmlspecialchars($student['address']) ?>">
                                                     Edit
                                                 </button>
-
                         <!-- Delete -->
                         <form action="edit.php" method="POST" onsubmit="return confirm('Delete this student?')">
-
                             <input type="hidden" name="id" value="<?= $student['id'] ?>">
                             <input type="hidden" name="action" value="remove">
                             <button type="submit" class="btn btn-sm btn-danger"> Remove </button>
 
                         </form>                        
-
                                               </div>
                                         </td>
                                     </tr>
@@ -278,18 +260,32 @@ $studentCount = mysqli_fetch_assoc($countResult)['total'];
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
 
 document.getElementById('editModal').addEventListener('show.bs.modal', function(event) {
 
+    // Get the clicked Edit button
     let button = event.relatedTarget;
 
-    let fields = ['id', 'first', 'last', 'email', 'phone', 'gender', 'dob', 'address'];
+    // Get student details from dataset
+    let id = button.dataset.id;
+    let first = button.dataset.first;
+    let last = button.dataset.last;
+    let email = button.dataset.email;
+    let phone = button.dataset.phone;
+    let gender = button.dataset.gender;
+    let dob = button.dataset.dob;
+    let address = button.dataset.address;
 
-    fields.forEach(field => {
-        document.getElementById('edit' + field.charAt(0).toUpperCase() + field.slice(1)).value = button.dataset[field];
-    });
+    // Fill the modal input fields
+    document.getElementById('editId').value = id;
+    document.getElementById('editFirst').value = first;
+    document.getElementById('editLast').value = last;
+    document.getElementById('editEmail').value = email;
+    document.getElementById('editPhone').value = phone;
+    document.getElementById('editGender').value = gender;
+    document.getElementById('editDob').value = dob;
+    document.getElementById('editAddress').value = address;
 
 });
 

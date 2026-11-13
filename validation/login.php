@@ -1,6 +1,8 @@
 
 <?php
 
+session_start();
+
 require __DIR__ . '/../connection/db.php';
 
 $error = '';
@@ -26,21 +28,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($user && (password_verify($password, $user['password']) || $password == $user['password'])) {
 
+        session_regenerate_id(true);
+        $_SESSION['user_role'] = $role;
+
         if ($role == 'admin') {
+            unset($_SESSION['student_id']);
             header("Location: ../dashboard/admin.php");
-            // header("Location: ../stddashboard.php");
         } 
         else {
+            $_SESSION['student_id'] = (int) $user['id'];
             header("Location: ../stddashboard.php");
         }
-
+        exit;
     } 
     else {
         $error = "Invalid email or password";
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 

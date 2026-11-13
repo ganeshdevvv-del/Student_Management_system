@@ -3,13 +3,11 @@
 require __DIR__.'../connection/db.php';
 
 $first_name = $_POST['first_name'];
-$last_name = $_POST["last_name"];
+$last_name =trim($_POST["last_name"]??"");
 $email = trim($_POST["email"]??"");
-$password = trim($_POST["password"]??"");
-$phone = $_POST["phone"];
-$gender = $_POST['gender']??"";
-$dob = $_POST["dob"];
-$address = $_POST["address"];
+$password = trim($_POST['password']??"");
+$phone = trim($_POST["phone"]??"");
+$gender = trim ($_POST["gender"]??"");
 
 ?>
 
