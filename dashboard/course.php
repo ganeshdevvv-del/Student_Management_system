@@ -82,12 +82,12 @@ $courseCount = mysqli_num_rows($result);
 
             <!-- nav bar -->
             <aside class="col-md-2 sidebar p-3">
-                <h4 class="mb-4">Student</h4>
+                <h4 class="mb-4">🎓 Student</h4>
                 <nav class="nav flex-column gap-2">
-                    <a href="admin.php" class="p-2 rounded">Admin Dashboard</a>
-                    <a href="student.php" class="p-2 rounded">Student Directory</a>
-                    <a href="course.php" class="p-2 rounded active">Courses</a>
-                    <a href="enrollment.php" class="p-2 rounded">Enrollments</a>
+                    <a href="admin.php" class="p-2 rounded">▦  Admin Dashboard</a>
+                    <a href="student.php" class="p-2 rounded">♙ Student profile</a>
+                    <a href="course.php" class="p-2 rounded active">Course Directory</a>
+                    <a href="enrollment.php" class="p-2 rounded">☑ Enrollments</a>
                 </nav>
             </aside>
 
@@ -180,21 +180,33 @@ $courseCount = mysqli_num_rows($result);
                                 </thead>
 
                                 <tbody>
-                 <?php while ($course = mysqli_fetch_assoc($result)): ?>
-                     <tr>
-                        <td><?= htmlspecialchars($course['course_code']) ?></td>
-                        <td><?= htmlspecialchars($course['course_name']) ?></td>
-                        <td><?= htmlspecialchars($course['fees']) ?></td>
-                        <td><?= htmlspecialchars($course['duration']) ?></td>
-                     <td>
+                                <?php while ($course = mysqli_fetch_assoc($result)): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($course['course_code']) ?></td>
+                                        <td><?= htmlspecialchars($course['course_name']) ?></td>
+                                        <td><?= htmlspecialchars($course['fees']) ?></td>
+                                        <td><?= htmlspecialchars($course['duration']) ?></td>
+                                        <td>
+                                            <div class="d-flex gap-2">
+                                                <button class="btn btn-sm btn-primary"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editCourseModal"
+                                                        data-code="<?= htmlspecialchars($course['course_code']) ?>"
+                                                        data-name="<?= htmlspecialchars($course['course_name']) ?>"
+                                                        data-fees="<?= htmlspecialchars($course['fees']) ?>"
+                                                        data-duration="<?= htmlspecialchars($course['duration']) ?>">
+                                                    Edit
+                                                </button>
+
                                                 <a href="course.php?delete=<?= urlencode($course['course_code']) ?>"
                                                     class="btn btn-sm btn-danger"
                                                     onclick="return confirm('Delete this course?')">
                                                     Remove
                                                 </a>
-                                            </td>
-                                        </tr>
-                                    <?php endwhile; ?>                   
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endwhile; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -203,5 +215,72 @@ $courseCount = mysqli_num_rows($result);
             </main>
         </div>
     </div>
+
+    <div class="modal fade" id="editCourseModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="edit.php" method="POST">
+                    <div class="modal-header">
+                        <h5>Edit Course</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input type="hidden" name="action" value="edit_course">
+                        <div class="mb-3">
+                            <label class="form-label">Course Code</label>
+                            <input type="text" name="course_code" id="editCourseCode" class="form-control" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Course Name</label>
+                            <input type="text" name="course_name" id="editCourseName" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Course Fees</label>
+                            <input type="number" name="course_fees" id="editCourseFees" class="form-control" min="0" step="0.01" required>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Start At</label>
+                                <input type="text" name="course_start" id="editCourseStart" class="form-control" placeholder="Jan" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">End At</label>
+                                <input type="text" name="course_end" id="editCourseEnd" class="form-control" placeholder="Dec" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const editCourseModal = document.getElementById('editCourseModal');
+
+        editCourseModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const code = button.dataset.code;
+            const name = button.dataset.name;
+            const fees = button.dataset.fees;
+            const duration = button.dataset.duration || '';
+            const [start, end] = duration.split('-');
+
+            document.getElementById('editCourseCode').value = code;
+            document.getElementById('editCourseName').value = name;
+            document.getElementById('editCourseFees').value = fees;
+            document.getElementById('editCourseStart').value = start || '';
+            document.getElementById('editCourseEnd').value = end || '';
+        });
+    </script>
 </body>
 </html>

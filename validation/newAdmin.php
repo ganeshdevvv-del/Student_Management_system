@@ -11,9 +11,7 @@ $email =$_POST['email'];
 $password =$_POST['password'];
 
 $sql = "INSERT INTO admin (name,email,password) VALUES(?,?,?)";
-
 $stmt = mysqli_prepare($conn,$sql);
-
 mysqli_stmt_bind_param(
     $stmt, "sss",$name,$email,$password
 );

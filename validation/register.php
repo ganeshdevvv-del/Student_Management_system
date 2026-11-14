@@ -21,22 +21,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($_POST['password'] != $confirm_password) {
 
-        $error = "Passwords do not match";
+        $error = "Passwords not match";
 
     } else {
 
         $sql = "INSERT INTO students
                 (first_name, last_name, email, password, phone, gender, dob, address)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
         $stmt = mysqli_prepare($conn, $sql);
-
         mysqli_stmt_bind_param( $stmt,"ssssssss",$first_name,$last_name,$email,$password,$phone,$gender,$dob,$address );
 
         if (mysqli_stmt_execute($stmt)) {
             header("Location: ../dashboard/student.php");
             exit;
-        } else {
+        } 
+        else {
             $error = "Registration failed";
         }
     }
@@ -63,15 +62,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="container" style="max-width: 720px;">
     <div class="card shadow-sm rounded-4 border-0">
         <div class="card-body p-4">
-
             <h2 class="h4 mb-2">Add Student</h2>
-
             <p class="text-danger"><?php echo $error; ?></p>
 
             <form method="POST">
 
                 <div class="row g-3">
-
                     <div class="col-md-6">
                         <label class="form-label">First Name</label>
                         <input type="text" name="first_name" class="form-control">

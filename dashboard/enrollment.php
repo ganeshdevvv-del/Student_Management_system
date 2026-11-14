@@ -7,13 +7,12 @@ require __DIR__ . '/../connection/db.php';
 $students = mysqli_query($conn, "SELECT * FROM students");
 $courses = mysqli_query($conn, "SELECT * FROM course");
 
-// Save enrollment
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $student_id = $_POST['student_id'];
     $course_codes = $_POST['course_codes'] ?? [];
 
-    // Delete old enrollments
+    # Delete old enrollments
     $sql = "DELETE FROM enrollment WHERE student_id = ?";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "i", $student_id);
@@ -95,30 +94,22 @@ while ($row = mysqli_fetch_assoc($result)) {
 
             <!-- Sidebar -->
             <aside class="col-md-2 sidebar p-3">
-
-                <h4 class="mb-4">Student</h4>
-
+                <h4 class="mb-4">🎓 Student</h4>
                 <nav class="nav flex-column gap-2">
-                    <a href="admin.php" class="p-2 rounded">Admin Dashboard</a>
-                    <a href="student.php" class="p-2 rounded">Student Directory</a>
-                    <a href="course.php" class="p-2 rounded">Courses</a>
-                    <a href="enrollment.php" class="p-2 rounded active">Enrollments</a>
+                    <a href="admin.php" class="p-2 rounded">▦  Admin Dashboard</a>
+                    <a href="student.php" class="p-2 rounded">♙ Student profile</a>
+                    <a href="course.php" class="p-2 rounded">▤ Courses</a>
+                    <a href="enrollment.php" class="p-2 rounded active">Enroll Student</a>
                 </nav>
-
             </aside>
-
-            <!-- Main Content -->
             <main class="col-md-10 p-4">
-
                 <p class="text-secondary mb-1">Administration</p>
                 <h3 class="mb-4">Course Management</h3>
 
                 <!-- Banner -->
                 <div class="directory-banner text-white rounded-4 p-4 mb-4">
-
                     <h4>Manage your courses</h4>
                     <p class="mb-0">View and manage all available courses.</p>
-
                 </div>
 <!-- ------------------------------------------------------------------------------------------- -->
                 <!-- Enrollment Form displaying.... -->

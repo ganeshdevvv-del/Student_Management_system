@@ -62,10 +62,10 @@ $studentCount = mysqli_fetch_assoc($countResult)['total'];
             <h4 class="mb-4">🎓 Student</h4>
 
             <nav class="nav flex-column gap-2">
-                <a href="admin.php" class="p-2 rounded">Admin Dashboard</a>
+                <a href="admin.php" class="p-2 rounded">▦  Admin Dashboard</a>
                 <a href="student.php" class="p-2 rounded active">Student Directory</a>
-                <a href="course.php" class="p-2 rounded">Courses</a>
-                <a href="enrollment.php" class="p-2 rounded">Enrollments</a>
+                <a href="course.php" class="p-2 rounded">▤ Courses</a>
+                <a href="enrollment.php" class="p-2 rounded">☑ Enrollmentss</a>
             </nav>
         </aside>
 

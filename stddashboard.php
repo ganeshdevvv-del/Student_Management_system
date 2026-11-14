@@ -35,15 +35,13 @@ if (isset($_POST['update_profile'])) {
     $address = $_POST['address'] ?? '';
 
     $sql = "UPDATE students SET first_name = ?, last_name = ?, email = ?, phone = ?, gender = ?, dob = ?, address = ? WHERE id = ?";
-
     $stmt = mysqli_prepare($conn, $sql);
-
     mysqli_stmt_bind_param($stmt, "sssssssi", $firstName, $lastName, $email, $phone, $gender, $dob, $address,$studentId);
-
     if (mysqli_stmt_execute($stmt)) {
         header("Location: stddashboard.php?updated=1");
         exit;
-    } else {
+    } 
+    else {
         $error = "Profile update failed";
     }
 }
@@ -104,8 +102,7 @@ $enrollmentResult = mysqli_stmt_get_result($stmt);
             <aside class="col-md-3 col-lg-2 sidebar p-3">
                 <h4 class="mb-4">Student Portal</h4>
                 <nav class="nav flex-column gap-2">
-                    <a class="rounded p-2" href="#profile">My Profile</a>
-                    <a class="rounded p-2" href="#enrollments">My Courses</a>
+                    <a class="rounded p-2 active" href="#profile">My Profile</a>
                 </nav>
             </aside>
             <!-- Main Content -->

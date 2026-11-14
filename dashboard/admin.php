@@ -3,6 +3,7 @@ require __DIR__ . '/../connection/db.php';
 
 $result = mysqli_query($conn,
                       'SELECT (SELECT COUNT(*) FROM students) AS total_students,
+                      
                       (SELECT COUNT(*) FROM course) AS total_courses'
                       );
                       
