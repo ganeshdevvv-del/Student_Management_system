@@ -1,21 +1,20 @@
 
 <?php
 
-session_start();
-
 require __DIR__ . '/../connection/db.php';
 
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $role = $_POST['role'];
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
 
-    $table = ($role == 'admin') ? 'admin' : 'students';
+    // $role = $_POST['role'];
 
-    $sql = "SELECT * FROM $table WHERE email = ?";
+    // $table = ($role == 'admin') ? 'admin' : 'students';
+
+    $sql = "SELECT * FROM admin WHERE email = ?";
     $stmt = mysqli_prepare($conn, $sql);
 
     mysqli_stmt_bind_param($stmt, "s", $email);
@@ -24,25 +23,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $result = mysqli_stmt_get_result($stmt);
     $user = mysqli_fetch_assoc($result);
 
-    // echo "executing.............";
+    if ($user && (password_verify($password, $user['password']))|| $password == $user['password']) {
 
-    if ($user && (password_verify($password, $user['password']) || $password == $user['password'])) {
-
-        session_regenerate_id(true);
-        $_SESSION['user_role'] = $role;
-
-        if ($role == 'admin') {
-            unset($_SESSION['student_id']);
-            header("Location: ../dashboard/admin.php");
-        } 
-        else {
-            $_SESSION['student_id'] = (int) $user['id'];
-            header("Location: ../stddashboard.php");
-        }
+        header("Location: ../dashboard/admin.php");
         exit;
+
     } 
     else {
-        $error = "Invalid email or password";
+        $sql = "SELECT * FROM students WHERE email = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+
+        mysqli_stmt_bind_param($stmt, "s", $email);
+        mysqli_stmt_execute($stmt);
+
+        $result = mysqli_stmt_get_result($stmt);
+        $user = mysqli_fetch_assoc($result);
+
+        if ($user && (password_verify($password, $user['password'])) || $password == $user['password'] ){
+
+            header("Location: ../stddashboard.php");
+            exit;
+
+        } else {
+            $error = "Invalid email or password";
+        }
     }
 }
 ?>
@@ -64,13 +68,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <form method="POST">
             <div class="form-grid">
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label>Login As:</label>
                     <select name="role" required>
                         <option value="student">Student</option>
                         <option value="admin">Admin</option>
                     </select>
-                </div>
+                </div> -->
 
                 <div class="form-group">
                     <label>Email:</label>

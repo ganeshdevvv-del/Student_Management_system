@@ -2,55 +2,45 @@
 <?php
 
 session_start();
-
-if (!isset($_SESSION['user_role'], $_SESSION['student_id']) || $_SESSION['user_role'] !== 'student') {
-    header("Location: validation/login.php");
-    exit;
-}
 require __DIR__ . '/connection/db.php';
+
 $studentId = $_SESSION['student_id'];
-$error = '';
-// Fetch student details
-$sql = "SELECT * FROM students WHERE id = ?";
+
+$sql = "SELECT * FROM user WHERE id = ?";
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "i", $studentId);
 mysqli_stmt_execute($stmt);
+$student = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 
-$result = mysqli_stmt_get_result($stmt);
-$student = mysqli_fetch_assoc($result);
+$error = '';
 
-if (!$student) {
-    header("Location: validation/login.php");
-    exit;
-}
-
-// Update profile
 if (isset($_POST['update_profile'])) {
-    $firstName = $_POST['first_name'] ?? '';
-    $lastName = $_POST['last_name'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $phone = $_POST['phone'] ?? '';
-    $gender = $_POST['gender'] ?? '';
-    $dob = $_POST['dob'] ?? '';
-    $address = $_POST['address'] ?? '';
 
-    $sql = "UPDATE students SET first_name = ?, last_name = ?, email = ?, phone = ?, gender = ?, dob = ?, address = ? WHERE id = ?";
+    $firstName = $_POST['first_name'];
+    $lastName = $_POST['last_name'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $gender = $_POST['gender'];
+    $dob = $_POST['dob'];
+    $address = $_POST['address'];
+
+    $sql = "UPDATE user SET first_name=?, last_name=?, email=?, phone=?, gender=?, dob=?, address=? WHERE id=?";
+
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "sssssssi", $firstName, $lastName, $email, $phone, $gender, $dob, $address,$studentId);
+    mysqli_stmt_bind_param($stmt, "sssssssi", $firstName, $lastName, $email, $phone, $gender, $dob, $address, $studentId);
+
     if (mysqli_stmt_execute($stmt)) {
-        header("Location: stddashboard.php?updated=1");
+        header("Location: stddashboard.php");
         exit;
-    } 
-    else {
-        $error = "Profile update failed";
+    } else {
+        $error = "Profile not updated";
     }
 }
 
 // Fetch enrolled courses
-$sql = "SELECT c.*
-        FROM enrollment e
-        INNER JOIN course c ON e.course_code = c.course_code
-        WHERE e.student_id = ?";
+$sql = "SELECT course.* FROM enrollment
+        JOIN course ON enrollment.course_id = course.id
+        WHERE enrollment.user_id = ?";
 
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "i", $studentId);
@@ -59,6 +49,7 @@ mysqli_stmt_execute($stmt);
 $enrollmentResult = mysqli_stmt_get_result($stmt);
 
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -250,3 +241,4 @@ $enrollmentResult = mysqli_stmt_get_result($stmt);
     </div>
 </body>
 </html>
+

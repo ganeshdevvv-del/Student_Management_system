@@ -7,7 +7,7 @@ welcome to landing page..........
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A->Z Scholl</title>
+    <title>A->Z School</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-B/GM4XqrwHnWXNOWMbloTmrYXZg10cakYGmpfsR/bbzQ6JAJI4ihuyADKLnBgrCe" crossorigin="anonymous">
 </head>
 <body>
@@ -55,6 +55,7 @@ welcome to landing page..........
                     </li>
 
                     <li class="nav-item"> <a href="#set"></a></li>
+                    </form>
                 </ul>
             </div>
              <a href="validation/login.php" class="btn btn-outline-primary px-4 rounded-pill me-2">
@@ -62,12 +63,14 @@ welcome to landing page..........
                 </a>
         </div>
     </nav>
-
+    <aside></aside>
 
 </nav>
 
 <header>
-    <div class="text-white"> hello</div>
+    <div class="text-white"> 
+        <h1> welcome to</h1>
+    </div>
 
 </header>
 
@@ -76,7 +79,7 @@ welcome to landing page..........
 </section>
 
 <footer>
-    
+
 </footer>
     
 <script type="module" src="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-1a/pXj49ZQ1aHEmrJ+gMw1otqoVsYwlEnlD8mIfY2TV03r20Y0CN7uqx1tQogjPL" crossorigin="anonymous"></script>
